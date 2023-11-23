@@ -1,0 +1,27 @@
+trigger:
+- master
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: utb
+    steps:
+    - script: |
+        gcloud builds submit --tag gcr.io/[PROJECT_ID]/utbapp:$(Build.BuildId) .
+      displayName: 'Build and Push to GCR'
+
+- stage: Provision
+  displayName: 'Creating resources on GCP'
+  dependsOn: Build
+  jobs:
+    - job: provision
+      displayName: 'Provision container instance'
+      pool:
+        name: utb
+      steps:
+        # Add steps to provision resources on GCP using Terraform or other GCP tools
+
